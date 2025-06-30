@@ -1,5 +1,7 @@
+import json
 import azure.functions as func
 import logging
+import httpx
 
 app = func.FunctionApp()
 
@@ -12,5 +14,20 @@ app = func.FunctionApp()
 )
 def process(message: func.ServiceBusMessage, response: func.Out[str]):
     logging.info("processing")
-    logging.info(message.get_body().decode("utf-8"))
-    response.set("aa")
+    body = message.get_body().decode("utf-8")
+    logging.info(body)
+    try:
+        httpRes = httpx.get(
+            f"https://roggia-as-fzh8avafepc3f8cm.eastus-01.azurewebsites.net/{body}"
+        )
+        if httpRes.status_code == 200:
+            logging.info("success bro")
+            response.set(json.dumps(httpRes.json()))
+        else:
+            logging.info("failed")
+            raise Exception("system failed")
+
+    except Exception as err:
+        logging.info(err)
+        logging.info("failed")
+        raise Exception("system failed")
