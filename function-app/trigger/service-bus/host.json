@@ -1,6 +1,15 @@
 {
   "version": "2.0",
+  "extensions": {
+    "serviceBus": {
+      "clientRetryOptions": {
+        "delay": "00:01:00",
+        "maxDelay": "00:05:00"
+      }
+    }
+  },
   "logging": {
+    "default": "Information",
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
